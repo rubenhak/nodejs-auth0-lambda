@@ -1,1 +1,1 @@
-# nodejs-auth0-lambda
+# Auth0 Lambda Helper
