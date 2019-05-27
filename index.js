@@ -3,9 +3,9 @@ const axios = require('axios');
 module.exports.DOMAIN = `https://${process.env.AUTH0_TENANT_NAME}.auth0.com`
 module.exports.AUDIENCE = `${module.exports.DOMAIN}/api/v2/`;
 
-module.exports.client = function(context) {
+module.exports.client = function(event) {
     var headers = {};
-    var origIP = getOrigIP(context);
+    var origIP = getOrigIP(event);
     if (origIP) {
         headers['auth0-forwarded-for'] = origIP;
     } else {
@@ -17,19 +17,19 @@ module.exports.client = function(context) {
     return instance;
 }
 
-module.exports.post = function(context, url, postData) {
-    var client = module.exports.client(context);
+module.exports.post = function(event, url, postData) {
+    var client = module.exports.client(event);
     var fullUrl = `${module.exports.DOMAIN}${url}`;
     return client.post(fullUrl, postData);
 }
 
-function getOrigIP(context)
+function getOrigIP(event)
 {
-    if (!context) {
+    if (!event) {
         return null;
     }
-    if (!context.headers) {
+    if (!event.headers) {
         return null;
     }
-    return context.headers['X-Forwarded-For'];
+    return event.headers['X-Forwarded-For'];
 }
